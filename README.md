@@ -1,4 +1,4 @@
-# ClawLittle Replication
+# ClawLittle 
 
 This project is a minimal viable terminal UI replication of the OpenClaw project, focusing on core agentic loop functionality, multi-LLM backend support, and session management. It is designed to operate entirely within a terminal environment, with input exclusively through Bash or Windows CMD.
 

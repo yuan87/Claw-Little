@@ -93,6 +93,13 @@ class AnthropicCompatibleAdapter:
                 kwargs["system"] = system_prompt
 
             response = self.client.messages.create(**kwargs)
-            return response.content[0].text
+            # Handle both standard Anthropic response format and custom API formats
+            content = response.content[0]
+            if isinstance(content, str):
+                return content
+            elif hasattr(content, 'text'):
+                return content.text
+            else:
+                return str(content)
         except Exception as e:
             return f"Error communicating with Anthropic-compatible API: {e}"
