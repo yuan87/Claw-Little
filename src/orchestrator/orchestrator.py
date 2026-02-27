@@ -74,7 +74,7 @@ class Orchestrator:
         print("  " + "-" * 72)
 
     def run(self):
-        print("Welcome to OpenClaw Mini! Type /help for commands.")
+        print("Welcome to ClawLittle! Type /help for commands.")
         print(f"Current LLM: {self.current_llm_provider} ({self.current_llm_model})")
         print(f"Active session: {self.session_manager.get_current_session_id()}")
 
@@ -164,7 +164,7 @@ class Orchestrator:
             except KeyboardInterrupt:
                 self.session_manager.save_session()
                 self.tool_executor.shell.close()
-                print("\nExiting OpenClaw Mini. Goodbye!")
+                print("\nExiting ClawLittle. Goodbye!")
                 break
             except Exception as e:
                 print(f"An unexpected error occurred: {e}")

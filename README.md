@@ -1,4 +1,4 @@
-# OpenClaw Minimal Replication
+# ClawLittle Replication
 
 This project is a minimal viable terminal UI replication of the OpenClaw project, focusing on core agentic loop functionality, multi-LLM backend support, and session management. It is designed to operate entirely within a terminal environment, with input exclusively through Bash or Windows CMD.
 
@@ -15,8 +15,8 @@ This project is a minimal viable terminal UI replication of the OpenClaw project
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/openclaw_mini.git
-    cd openclaw_mini
+    git clone https://github.com/yourusername/clawlittle.git
+    cd clawlittle
     ```
 2.  **Install dependencies**:
     ```bash
@@ -30,7 +30,7 @@ This project is a minimal viable terminal UI replication of the OpenClaw project
 ### Local Execution
 Run the application using the provided shell script or directly via Python:
 ```bash
-bash openclaw_mini.sh
+bash clawlittle.sh
 # OR
 python src/main.py
 ```
@@ -49,20 +49,17 @@ python src/main.py
 ## Project Structure
 
 ```
-openclaw_mini/
+clawlittle/
 ├── README.md
-├── openclaw_mini_blueprint.md
-└── src/
+├── src/
     ├── __init__.py
     ├── main.py
     ├── cli/
     │   └── __init__.py
     ├── llm_adapters/
     │   ├── __init__.py
-    │   ├── openai_adapter.py
-    │   ├── anthropic_adapter.py
-    │   ├── gemini_adapter.py
-    │   └── openrouter_adapter.py
+    │   ├── openai_compatible_adapter.py
+    │   ├── anthropic_compatible_adapter.py
     ├── session_manager/
     │   └── __init__.py
     │   └── session_manager.py
