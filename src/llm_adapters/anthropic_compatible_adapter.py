@@ -77,7 +77,7 @@ class AnthropicCompatibleAdapter:
 
         return system_prompt, anthropic_messages
 
-    def generate_response(self, messages: List[Dict[str, str]], model: str = "claude-sonnet-4-20250514") -> str:
+    def generate_response(self, messages: List[Dict[str, str]], model: str = None) -> str:
         try:
             system_prompt, anthropic_messages = self._normalize_messages(messages)
 
@@ -93,13 +93,29 @@ class AnthropicCompatibleAdapter:
                 kwargs["system"] = system_prompt
 
             response = self.client.messages.create(**kwargs)
-            # Handle both standard Anthropic response format and custom API formats
-            content = response.content[0]
-            if isinstance(content, str):
-                return content
-            elif hasattr(content, 'text'):
-                return content.text
+
+            # Handle different response formats from various API proxies:
+            # 1. Plain string (some proxies like AgentRouter)
+            if isinstance(response, str):
+                return response
+            # 2. Dict-like response (some proxies return raw JSON)
+            if isinstance(response, dict):
+                content = response.get("content", [])
+                if isinstance(content, str):
+                    return content
+                if isinstance(content, list) and len(content) > 0:
+                    block = content[0]
+                    if isinstance(block, str):
+                        return block
+                    return block.get("text", str(block))
+                return str(response)
+            # 3. Standard Anthropic Message object
+            content_block = response.content[0]
+            if isinstance(content_block, str):
+                return content_block
+            elif hasattr(content_block, "text"):
+                return content_block.text
             else:
-                return str(content)
+                return str(content_block)
         except Exception as e:
             return f"Error communicating with Anthropic-compatible API: {e}"

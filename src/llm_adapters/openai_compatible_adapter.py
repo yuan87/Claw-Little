@@ -53,7 +53,7 @@ class OpenAICompatibleAdapter:
 
         return normalized
 
-    def generate_response(self, messages: List[Dict[str, str]], model: str = "gpt-4o-mini") -> str:
+    def generate_response(self, messages: List[Dict[str, str]], model: str = None) -> str:
         try:
             normalized = self._normalize_messages(messages)
             response = self.client.chat.completions.create(
