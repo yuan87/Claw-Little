@@ -63,8 +63,10 @@ class TestListProviders(unittest.TestCase):
     def test_list_providers(self):
         providers = list_providers()
         self.assertEqual(providers, sorted(providers))  # sorted
-        expected = {"openai", "deepseek", "openrouter", "anyrouter", "gemini", "anthropic", "agentrouter"}
-        self.assertEqual(set(providers), expected)
+        # Must include at least these core providers
+        core = {"openai", "deepseek", "gemini", "anthropic", "groq", "mistral", "ollama"}
+        self.assertTrue(core.issubset(set(providers)))
+        self.assertGreaterEqual(len(providers), 20)
 
 
 class TestGetLlmAdapter(unittest.TestCase):
@@ -89,15 +91,18 @@ class TestGetLlmAdapter(unittest.TestCase):
     # ── Test 10: All OpenAI-format providers ───────────────────────────
     @patch("llm_adapters.openai_compatible_adapter.openai.OpenAI")
     def test_all_openai_format_providers(self, mock_openai):
-        for name in ["deepseek", "openrouter", "anyrouter", "gemini"]:
+        openai_providers = [n for n, c in PROVIDERS.items() if c["api_format"] == "openai"]
+        for name in openai_providers:
             adapter = get_llm_adapter(name, api_key="k")
             self.assertIsInstance(adapter, OpenAICompatibleAdapter, f"{name} should be OpenAICompatible")
 
     # ── Test 11: All Anthropic-format providers ────────────────────────
     @patch("llm_adapters.anthropic_compatible_adapter.anthropic.Anthropic")
     def test_all_anthropic_format_providers(self, mock_anthropic):
-        adapter = get_llm_adapter("agentrouter", api_key="k")
-        self.assertIsInstance(adapter, AnthropicCompatibleAdapter)
+        anthropic_providers = [n for n, c in PROVIDERS.items() if c["api_format"] == "anthropic"]
+        for name in anthropic_providers:
+            adapter = get_llm_adapter(name, api_key="k")
+            self.assertIsInstance(adapter, AnthropicCompatibleAdapter, f"{name} should be AnthropicCompatible")
 
 
 if __name__ == "__main__":

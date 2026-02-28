@@ -35,6 +35,11 @@ class AnthropicCompatibleAdapter:
             kwargs["base_url"] = base_url
         if auth_token:
             kwargs["auth_token"] = auth_token
+        # Add default headers to avoid WAF (e.g., Alibaba Cloud) blocking requests
+        kwargs["default_headers"] = {
+            "User-Agent": "ClawLittle/1.0",
+            "Accept": "application/json",
+        }
         self.client = anthropic.Anthropic(**kwargs)
 
     def _normalize_messages(self, messages: List[Dict[str, str]]) -> tuple:
