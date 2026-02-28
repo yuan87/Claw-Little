@@ -79,17 +79,27 @@ class ToolExecutor:
             return {"output": f"Unknown tool: {tool_name}", "returncode": 1}
 
     def parse_tool_call(self, llm_response: str) -> dict | None:
-        # Expecting LLM to output a JSON block like: 
-        # TOOL_CALL: {"tool_name": "execute_bash", "args": "ls -l"}
-        if llm_response.startswith("TOOL_CALL:"):
+        if "TOOL_CALL:" in llm_response:
             try:
-                tool_call_str = llm_response.replace("TOOL_CALL:", "").strip()
-                tool_call = json.loads(tool_call_str.replace("\\\'", "\"")) # Handle single quotes
-                return tool_call
+                # Extract the JSON part using string manipulation
+                tool_call_str = llm_response.split("TOOL_CALL:", 1)[1].strip()
+                # Find the first { and the last } in the remaining string
+                start_idx = tool_call_str.find('{')
+                end_idx = tool_call_str.rfind('}')
+                
+                if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                    json_str = tool_call_str[start_idx:end_idx+1]
+                    # strict=False allows unescaped control characters like literal newlines inside string values
+                    tool_call = json.loads(json_str.replace("\\'", "\""), strict=False)
+                    return tool_call
             except json.JSONDecodeError as e:
                 print(f"JSON Decode Error: {e}")
+                return None
+            except Exception as e:
+                print(f"Error parsing tool call: {e}")
                 return None
         return None
 
     def __del__(self):
-        self.shell.close()
+        if hasattr(self, 'shell'):
+            self.shell.close()
